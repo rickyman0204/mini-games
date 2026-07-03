@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小游戏合集 — Mini Games Collection</title>
+<style>
+:root {
+  --bg-deep: #0d0503;
+  --bg-primary: #1c0e08;
+  --bg-card: #3a1f1a;
+--bg-card-hover: #4d2a22;
+  --gold: #d4a843;
+  --gold-light: #f5d78c;
+  --gold-pale: #fff3cd;
+  --text: #e8d5c0;
+  --text-muted: #8b7060;
+  --accent: #c94040;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+.bg-layer::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(180,120,40,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(120,40,20,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 50%, rgba(180,100,30,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(180,100,30,0.04) 0%, transparent 50%);
+}
+.bg-layer::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,220,160,0.3) 50%, transparent),
+    radial-gradient(1px 1px at 25% 35%, rgba(255,200,140,0.25) 50%, transparent),
+    radial-gradient(1.5px 1.5px at 40% 8%, rgba(255,220,160,0.35) 50%, transparent),
+    radial-gradient(1px 1px at 55% 25%, rgba(255,200,140,0.2) 50%, transparent),
+    radial-gradient(1.5px 1.5px at 70% 12%, rgba(255,220,160,0.3) 50%, transparent),
+    radial-gradient(1px 1px at 85% 30%, rgba(255,200,140,0.25) 50%, transparent),
+    radial-gradient(1px 1px at 15% 55%, rgba(255,200,140,0.2) 50%, transparent),
+    radial-gradient(1.5px 1.5px at 60% 45%, rgba(255,220,160,0.2) 50%, transparent),
+    radial-gradient(1px 1px at 90% 60%, rgba(255,200,140,0.15) 50%, transparent),
+    radial-gradient(1px 1px at 30% 75%, rgba(255,200,140,0.2) 50%, transparent);
+}
+
+.glow-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.06; }
+.glow-orb.top { width: 500px; height: 500px; background: #d4a843; top: -200px; left: 50%; transform: translateX(-50%); }
+.glow-orb.left { width: 300px; height: 300px; background: #c94040; bottom: 100px; left: -100px; }
+.glow-orb.right { width: 300px; height: 300px; background: #d4a843; top: 40%; right: -100px; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+.header { text-align: center; padding: 60px 0 40px; position: relative; }
+.header-icon { font-size: 56px; display: block; margin-bottom: 16px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(212,168,67,0.3)); }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.header h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; background: linear-gradient(180deg, #f5d78c 0%, #d4a843 40%, #a07828 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 0.06em; margin-bottom: 12px; }
+.header .subtitle { color: var(--text-muted); font-size: 16px; letter-spacing: 0.15em; }
+.header .desc { color: var(--text-muted); font-size: 14px; margin-top: 12px; line-height: 1.8; max-width: 560px; margin-left: auto; margin-right: auto; }
+.header .desc strong { color: var(--gold-light); }
+.header .stats { display: inline-flex; gap: 32px; margin-top: 24px; padding: 16px 32px; background: rgba(42,21,18,0.6); border: 1px solid rgba(212,168,67,0.15); border-radius: 40px; backdrop-filter: blur(10px); }
+.stat-item { text-align: center; }
+.stat-num { font-size: 28px; font-weight: 700; color: var(--gold); display: block; }
+.stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; padding: 20px 0 60px; }
+
+.game-card {
+  background: var(--bg-card); border: 1px solid rgba(212,168,67,0.08); border-radius: var(--radius);
+  padding: 24px; cursor: pointer; transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative; overflow: hidden;
+}
+.game-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(212,168,67,0.06) 0%, transparent 70%); opacity: 0; transition: opacity 0.35s; }
+.game-card:hover { background: var(--bg-card-hover); border-color: rgba(212,168,67,0.25); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 60px rgba(212,168,67,0.06); }
+.game-card:hover::before { opacity: 1; }
+.game-card:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+.game-card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+.game-card.active { border-color: var(--gold); box-shadow: 0 0 30px rgba(212,168,67,0.2); }
+
+.card-number { font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-weight: 600; }
+.card-icon { font-size: 40px; margin-bottom: 12px; display: block; transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.card-title { font-size: 18px; font-weight: 700; color: var(--gold-light); margin-bottom: 4px; letter-spacing: 0.03em; }
+.card-cost { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+.card-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%) translateX(-8px); font-size: 20px; color: var(--gold); opacity: 0; transition: all 0.35s; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: linear-gradient(180deg, #2a1512 0%, #1c0e08 100%);
+  border: 1px solid rgba(212,168,67,0.2); border-radius: 20px;
+  padding: 40px; max-width: 560px; width: 90vw; max-height: 85vh; overflow-y: auto;
+  position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  transform: translateY(20px); transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-close {
+  position: absolute; top: 16px; right: 20px; font-size: 28px; color: var(--text-muted);
+  cursor: pointer; background: none; border: none; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  transition: all 0.2s;
+}
+.modal-close:hover { color: var(--gold); background: rgba(255,255,255,0.05); }
+
+.modal-icon { font-size: 64px; text-align: center; display: block; margin-bottom: 16px; }
+.modal-title { font-size: 28px; font-weight: 900; color: var(--gold-light); text-align: center; margin-bottom: 4px; }
+.modal-number { text-align: center; font-size: 12px; color: var(--gold); letter-spacing: 0.15em; margin-bottom: 24px; }
+
+.modal-section { margin-bottom: 20px; }
+.modal-section h3 { font-size: 14px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.modal-section p { font-size: 15px; color: var(--text); line-height: 1.8; }
+
+.modal-meta { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+.modal-meta span { padding: 8px 18px; background: rgba(212,168,67,0.08); border: 1px solid rgba(212,168,67,0.15); border-radius: 24px; font-size: 13px; color: var(--gold-light); }
+.modal-meta .cost-high { color: var(--accent); border-color: rgba(201,64,64,0.3); }
+.modal-meta .cost-free { color: #4caf50; border-color: rgba(76,175,80,0.3); }
+
+.modal-btn {
+  display: block; text-align: center; margin: 24px auto 0;
+  padding: 14px 32px; background: linear-gradient(135deg, #d4a843 0%, #b8862d 100%);
+  color: #1c0e08; font-size: 15px; font-weight: 700; border-radius: 50px;
+  text-decoration: none; letter-spacing: 0.04em; transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(212,168,67,0.25); max-width: 240px;
+}
+.modal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212,168,67,0.35); }
+
+.section-title { text-align: center; padding: 20px 0 28px; font-size: 13px; color: var(--text-muted); letter-spacing: 0.2em; text-transform: uppercase; }
+
+.footer { text-align: center; padding: 40px 24px 60px; color: var(--text-muted); font-size: 13px; position: relative; z-index: 1; }
+.footer a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+.footer a:hover { color: var(--gold-light); }
+.footer .divider { margin: 0 12px; opacity: 0.3; }
+
+.cta-wrap { text-align: center; padding: 40px 0 20px; position: relative; z-index: 1; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 16px 36px;
+  background: linear-gradient(135deg, #d4a843 0%, #b8862d 100%); color: #1c0e08;
+  font-size: 16px; font-weight: 700; border-radius: 50px; text-decoration: none;
+  letter-spacing: 0.04em; transition: all 0.3s; box-shadow: 0 4px 24px rgba(212,168,67,0.25);
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(212,168,67,0.35); }
+
+@media (max-width: 768px) {
+  .header { padding: 40px 0 28px; }
+  .header .stats { gap: 20px; padding: 12px 24px; }
+  .games-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .game-card { padding: 18px 14px; }
+  .card-icon { font-size: 32px; }
+  .card-title { font-size: 15px; }
+  .modal { padding: 28px 20px; }
+  .modal-icon { font-size: 48px; }
+  .modal-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="glow-orb top"></div>
+<div class="glow-orb left"></div>
+<div class="glow-orb right"></div>
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="container">
+<header class="header">
+  <span class="header-icon">🎮</span>
+  <h1>小游戏合集</h1>
+  <p class="subtitle">MINI GAMES COLLECTION</p>
+  <p class="desc">
+    点击任意游戏卡片查看<strong>详细规则</strong>与玩法说明<br>
+    下载压缩包解压后，双击 <strong>EXE</strong> 即可直接游玩
+  </p>
+  <div class="stats">
+    <div class="stat-item"><span class="stat-num">21</span><span class="stat-label">经典游戏</span></div>
+    <div class="stat-item"><span class="stat-num">🎰</span><span class="stat-label">休闲娱乐</span></div>
+    <div class="stat-item"><span class="stat-num">💰</span><span class="stat-label">金币系统</span></div>
+  </div>
+</header>
+
+<div class="section-title">✦ 点击卡片查看游戏详情 ✦</div>
+<div class="games-grid" id="gamesGrid"></div>
+
+<div class="cta-wrap">
+  <a class="cta-btn" href="/mini-games.zip">⬇ 下载 EXE 桌面版</a>
+</div>
+
+<footer class="footer">
+  <p><a href="https://github.com/rickyman0204/mini-games" target="_blank">GitHub</a> <span class="divider">|</span> Built with Pygame <span class="divider">|</span> © 2026 Mini Games Collection</p>
+</footer>
+</div>
+
+<script>
+const games = [
+  {id:1,icon:"🃏",name:"成双成对",cost:5,free:false,rule:"翻开卡牌寻找相同的配对。每次翻开两张牌，如果图案相同则配对成功并得分；如果不同则翻回，考验你的记忆力！",tip:"记住每张牌的位置，尽量用最少的翻牌次数完成配对。",cat:"记忆"},
+  {id:2,icon:"🌳",name:"苹果树",cost:0,free:true,rule:"摇晃苹果树让苹果落地。点击摇树按钮，苹果会从树上随机掉落，接住苹果即可得分。注意避开掉落的虫子和烂苹果！",tip:"站对位置，眼疾手快才能接住更多好苹果。",cat:"反应"},
+  {id:3,icon:"💣",name:"拆炸弹",cost:30,free:false,rule:"多条线路中只有一条是安全的。选择正确的线路拆除炸弹，选错会导致炸弹爆炸扣金币。凭借直觉和运气挑选正确线路！",tip:"每局奖励丰厚，但风险也很大，谨慎选择。",cat:"运气"},
+  {id:4,icon:"🕳️",name:"躲藏山洞",cost:50,free:false,rule:"选择其中一个山洞躲藏。每个山洞隐藏着不同的奖励或惩罚——可能发现宝藏，也可能遭遇危险。全靠运气！",tip:"山洞背后的结果完全随机，但高风险也意味着高回报。",cat:"运气"},
+  {id:5,icon:"🗺️",name:"迷宫探险",cost:50,free:false,rule:"在迷宫中寻找出口。使用方向键或点击控制角色移动，避开死胡同找到正确的路径到达终点即可获胜。",tip:"从终点倒推路线往往比从起点走更容易找到正确路径。",cat:"益智"},
+  {id:6,icon:"🎣",name:"钓鱼",cost:30,free:false,rule:"选择钓鱼地点后等待鱼儿上钩。不同地点有不同种类的鱼，钓到稀有鱼可以获得更多金币。看准时机提竿！",tip:"观察浮漂的动静，找准最佳的提竿时机。",cat:"休闲"},
+  {id:7,icon:"🎫",name:"数字彩票",cost:50,free:false,rule:"购买彩票号码后等待开奖。系统随机生成中奖号码，匹配越多数字奖金越高。一夜暴富还是血本无归？",tip:"小赌怡情，合理控制投注金额才是长久之道。",cat:"运气"},
+  {id:8,icon:"🪜",name:"爬梯子",cost:75,free:false,rule:"从底部出发，每次掷骰子决定前进的步数。途中会遇到梯子（快速上升）和蛇（滑落下降）。最先到达顶部的玩家获胜！",tip:"遇到梯子要果断攀爬，但也要小心蛇把你送回起点。",cat:"运气"},
+  {id:9,icon:"🎲",name:"骰子游戏",cost:10,free:false,rule:"投掷骰子猜大小。三个骰子点数总和为4-10为小，11-17为大。猜中即可获得金币奖励！",tip:"大小概率大致均等，但连续出现同一种结果后概率并不会改变。",cat:"竞猜"},
+  {id:10,icon:"💵",name:"摇钱树培养",cost:10,free:false,rule:"每天浇灌摇钱树，等待它慢慢成长。树木越大，每天产生的金币越多。坚持培养才能收获丰厚的回报！",tip:"耐心是关键，持续浇灌不要中断。",cat:"养成"},
+  {id:11,icon:"🧮",name:"随机算式",cost:15,free:false,rule:"在限定时间内完成随机生成的数学算式。答对越多得分越高，速度越快奖励越多。考验你的心算能力！",tip:"先算简单的，跳过难题争取答对更多题目。",cat:"益智"},
+  {id:12,icon:"🔮",name:"弹珠游戏",cost:20,free:false,rule:"弹珠从顶部弹射下落，经过随机排列的钉子阵后落入不同的得分槽。观察弹珠的物理轨迹，体验真实的碰撞反弹效果！",tip:"弹珠下落路径随机，每个槽位的中奖概率各不相同。",cat:"休闲"},
+  {id:13,icon:"🪙",name:"掷硬币",cost:0,free:true,rule:"猜硬币正反面。点击投掷硬币后等待结果揭晓，猜中即可获得金币。简单的50%概率游戏！",tip:"正面和反面的概率永远是50%，适合快速娱乐。",cat:"竞猜"},
+  {id:14,icon:"🐎",name:"赛马",cost:50,free:false,rule:"选择一匹赛马下注，然后观看比赛。每匹马有不同的赔率和速度属性，赔率越高的马获胜概率越低但回报更丰厚！",tip:"观察每匹马的历史表现再做选择，不要只看赔率。",cat:"竞猜"},
+  {id:15,icon:"🗑️",name:"捡垃圾",cost:100,free:false,rule:"在限定时间内将垃圾正确分类放入对应的垃圾桶。可回收、厨余、有害、其他——分对加分，分错扣分！",tip:"记住常见分类规则：塑料瓶可回收、果皮厨余、电池有害。",cat:"反应"},
+  {id:16,icon:"🪵",name:"敲木鱼",cost:10,free:false,rule:"点击木鱼敲击，每次敲击积累功德值。连续敲击可以进入连击状态，功德获取加速。放松身心，享受清脆的木鱼音效！",tip:"保持节奏稳定的敲击频率，不要停！",cat:"休闲"},
+  {id:17,icon:"🎡",name:"幸运转盘",cost:50,free:false,rule:"转盘上分布着不同倍数的奖励和特殊区域。点击旋转后等待转盘停止，指针指向的区域就是你的奖励！",tip:"转盘上奖励越大区域越小，不要被高倍率迷惑。",cat:"运气"},
+  {id:18,icon:"🚪",name:"是否要出门",cost:100,free:false,rule:"随机生成一个出门场景和可能发生的事件。你可以选择"出门"或"宅家"，不同的选择带来不同的随机结果。",tip:"不管选择什么，结果都是随机的——放轻松享受就好。",cat:"休闲"},
+  {id:19,icon:"💪",name:"力量比拼",cost:100,free:false,rule:"与AI对手进行力量对决。快速连击指定按键积攒力量条，时间结束时力量值更高的一方获胜！",tip:"手指放轻松，保持均匀高速的点击频率。",cat:"动作"},
+  {id:20,icon:"📝",name:"试卷批阅",cost:25,free:false,rule:"系统生成一份随机试卷和答案，你需要扮演老师批阅试卷。判断每道题的答案是否正确，批阅准确率越高奖励越多！",tip:"不要看花眼，仔细对比每个答案。",cat:"益智"},
+  {id:21,icon:"✈️",name:"飞行棋",cost:50,free:false,rule:"经典飞行棋玩法。掷骰子前进，将全部棋子送入终点即可获胜。途中可以踩掉对手的棋子让其重新出发！",tip:"优先出动所有棋子，保留关键位置上的防守优势。",cat:"棋牌"}
+];
+
+function openModal(game) {
+  const catColors = {"记忆":"#4caf50","反应":"#ff9800","运气":"#9c27b0","益智":"#2196f3","休闲":"#8bc34a","竞猜":"#e91e63","养成":"#00bcd4","动作":"#f44336","棋牌":"#795548"};
+  const catCol = catColors[game.cat] || '#d4a843';
+  const costClass = game.free ? 'cost-free' : (game.cost >= 30 ? 'cost-high' : '');
+  
+  document.getElementById('modalContent').innerHTML = `
+    <span class="modal-icon">${game.icon}</span>
+    <h2 class="modal-title">${game.name}</h2>
+    <p class="modal-number">GAME ${String(game.id).padStart(2,'0')}</p>
+    <div class="modal-meta">
+      <span class="${costClass}">${game.free ? '🆓 免费' : '💰 '+game.cost+' 金币'}</span>
+      <span style="border-color:${catCol};color:${catCol}">📂 ${game.cat}</span>
+    </div>
+    <div class="modal-section">
+      <h3>📖 游戏规则</h3>
+      <p>${game.rule}</p>
+    </div>
+    <div class="modal-section">
+      <h3>💡 玩法提示</h3>
+      <p>${game.tip}</p>
+    </div>
+    <a class="modal-btn" href="/mini-games.zip">⬇ 下载 EXE 桌面版游玩</a>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* Render game cards */
+const grid = document.getElementById('gamesGrid');
+games.forEach(g => {
+  const costHtml = g.free ? '<span style="color:#4caf50">🆓 免费</span>' : '💰 ' + g.cost;
+  const card = document.createElement('div');
+  card.className = 'game-card';
+  card.innerHTML = `
+    <span class="card-number">GAME ${String(g.id).padStart(2,'0')}</span>
+    <span class="card-icon">${g.icon}</span>
+    <span class="card-title">${g.name}</span>
+    <span class="card-cost">${costHtml}</span>
+    <span class="card-arrow">→</span>
+  `;
+  card.addEventListener('click', function() { openModal(g); });
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

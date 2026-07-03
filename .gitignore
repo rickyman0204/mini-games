@@ -3,20 +3,43 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.egg-info/
 
 # PyInstaller
 build/
 dist/
 *.spec
+*.exe
+
+# Build artifacts
+apk/
+android-sdk/
+*.apk
+*.zip
 
 # IDE
 .claude/
 .vscode/
 .idea/
+.wrangler/
+.netlify/
 
 # System
 .DS_Store
 Thumbs.db
+NUL
 
 # Logs
 *.log
+
+# Temp files
+*.tmp
+*.temp
+
+# Audio (too large for GitHub)
+*.mp3
+*.wav
+
+# Cache
+cache/
+tmp/

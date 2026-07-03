@@ -1,0 +1,13 @@
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/*.html
+  Content-Type: text/html; charset=UTF-8
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/*.zip
+  Content-Type: application/zip
+  Content-Disposition: attachment; filename="mini-games.zip"
+  Cache-Control: public, max-age=3600

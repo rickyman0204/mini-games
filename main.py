@@ -3,7 +3,10 @@ import sys
 import math
 import random
 import logging
+import asyncio
 import pygame
+
+IS_WEB = sys.platform == 'emscripten'
 
 from src.settings import (
     WINDOW_WIDTH, WINDOW_HEIGHT, TARGET_FPS, COLORS,
@@ -151,6 +154,22 @@ class Game:
         self.particles = ParticleEmitter()
         self.running = True
 
+        # Background music
+        try:
+            import sys
+            import os
+            if getattr(sys, 'frozen', False):
+                # Running as PyInstaller exe — bundled data is in temp dir
+                base_path = sys._MEIPASS
+            else:
+                base_path = os.path.dirname(os.path.abspath(__file__))
+            mp3_path = os.path.join(base_path, 'man.mp3')
+            pygame.mixer.music.load(mp3_path)
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(-1)  # loop forever
+        except Exception:
+            pass
+
         # Wallet
         self.wallet = Wallet()
 
@@ -275,6 +294,8 @@ class Game:
 
     def _toggle_fullscreen(self):
         """Toggle between windowed and fullscreen mode"""
+        if IS_WEB:
+            return
         self.fullscreen = not self.fullscreen
         if self.fullscreen:
             info = pygame.display.Info()
@@ -1867,21 +1888,24 @@ class Game:
         money_surf = self.font_money.render(f'¥{self.wallet.balance}', True, hex_to_rgb(COLORS['gold_light']))
         self.screen.blit(money_surf, (x + 54, y + 10))
 
-    def run(self):
-        """Main game loop"""
+    async def run(self):
+        """Main game loop - supports both desktop and web (via pygbag)"""
         while self.running:
             dt = self.clock.tick(TARGET_FPS) / 1000.0
             self.handle_events()
             self.update(dt)
             self.draw()
+            if IS_WEB:
+                await asyncio.sleep(0)
 
-        pygame.quit()
-        sys.exit()
+        if not IS_WEB:
+            pygame.quit()
+            sys.exit()
 
 
 def main():
     game = Game()
-    game.run()
+    asyncio.run(game.run())
 
 
 if __name__ == '__main__':

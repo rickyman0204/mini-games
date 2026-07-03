@@ -1,0 +1,22 @@
+{
+  "name": "小游戏合集",
+  "short_name": "小游戏合集",
+  "description": "21款经典小游戏，点击即玩",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0503",
+  "theme_color": "#d4a843",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
